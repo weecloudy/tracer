@@ -1,0 +1,6 @@
+.idea
+go.sum
+*.report
+*~
+.vscode
+cover.profile
