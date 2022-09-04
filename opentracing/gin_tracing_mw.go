@@ -25,7 +25,7 @@ func Tracer() gin.HandlerFunc {
 		ext.HTTPUrl.Set(startSpan, ctx.Request.URL.Path)
 		ext.HTTPMethod.Set(startSpan, ctx.Request.Method)
 		ctx.Request = ctx.Request.WithContext(opentracing.ContextWithSpan(ctx.Request.Context(), startSpan))
-		context.WithValue(ctx, parentSpanCtxKey, startSpan.Context())
+		context.WithValue(ctx, startSpanCtxKey, startSpan.Context())
 
 		ctx.Next()
 

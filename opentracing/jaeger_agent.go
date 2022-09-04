@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 	"github.com/uber/jaeger-client-go/zipkin"
@@ -34,7 +35,7 @@ type Options struct {
 
 type spanCtxKey struct{}
 
-var parentSpanCtxKey = spanCtxKey{}
+var startSpanCtxKey = spanCtxKey{}
 
 type Option func(c *Options)
 
@@ -71,7 +72,7 @@ func Logger(logger jaegerlog.DebugLogger) Option {
 
 func applyOptions(options ...Option) Options {
 	opts := Options{
-		SamplerType:      "const",
+		SamplerType:      jaeger.SamplerTypeConst,
 		SamplerParam:     1,
 		JaegerAgentHost:  os.Getenv(envJaegerAgentHost),
 		JaegerAgentPort:  os.Getenv(envJaegerAgentPort),
@@ -151,11 +152,14 @@ func InjectHTTPRequest(ctx context.Context, req *http.Request) {
 	if err := InitOpenTracer(); err != nil {
 		return
 	}
-	parentSpanContext := ctx.Value(parentSpanCtxKey)
+	parentSpanContext := ctx.Value(startSpanCtxKey)
 	if spanContext, ok := parentSpanContext.(opentracing.SpanContext); ok {
-		openTracer.Inject(
+		err := openTracer.Inject(
 			spanContext,
 			opentracing.HTTPHeaders,
 			opentracing.HTTPHeadersCarrier(req.Header))
+		if err != nil {
+			new(openTracingLogger).Error("openTracer inject err:" + err.Error())
+		}
 	}
 }
