@@ -13,9 +13,21 @@
 ### Reference
 
 1. 阿里云：https://help.aliyun.com/document_detail/90498.html (对接比较丰富)
+
 2. 腾讯云：https://cloud.tencent.com/document/product/1463/57462 https://cloud.tencent.com/document/product/1261/62946
+
 3. Istio: https://istio.io/latest/about/faq/#distributed-tracing
+
 4. Jaeger: https://github.com/jaegertracing/jaeger
-5. 字节 Hertz-tracer: https://github.com/hertz-contrib/tracer https://github.com/cloudwego/hertz-examples/tree/main/tracer https://github.com/cloudwego/hertz-examples/tree/main/opentelemetry
-6. bilibili kratos： https://go-kratos.dev/docs/component/middleware/tracing
-7. go-zero: https://go-zero.dev/cn/docs/deployment/trace
+
+5. OpenTracing : https://github.com/opentracing/specification/issues/163
+
+6. [open-telemetry](https://github.com/open-telemetry) : https://github.com/open-telemetry/opentelemetry-go  https://github.com/open-telemetry/opentelemetry-go-contrib
+
+7. 字节 Hertz-tracer: https://github.com/hertz-contrib/tracer https://github.com/cloudwego/hertz-examples/tree/main/tracer 
+
+   https://github.com/hertz-contrib/obs-opentelemetry https://github.com/cloudwego/hertz-examples/tree/main/opentelemetry
+
+8. bilibili kratos： https://go-kratos.dev/docs/component/middleware/tracing
+
+9. go-zero: https://go-zero.dev/cn/docs/deployment/trace

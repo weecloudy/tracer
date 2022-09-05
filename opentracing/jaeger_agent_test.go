@@ -3,12 +3,13 @@ package opentracing
 import (
 	"bytes"
 	"fmt"
-	"github.com/weecloudy/logger"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/weecloudy/logger"
 
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo"
@@ -101,9 +102,9 @@ var _ = Describe("InjectHttpRequest Success", func() {
 		Expect(openTracerCloser != nil).Should(BeTrue())
 
 		router := gin.New()
-		router.Use(Tracer())
+		router.Use(Tracing())
 		router.Handle(http.MethodGet, "/", func(ctx *gin.Context) {
-			InjectHTTPRequest(ctx, ctx.Request)
+			InjectHTTPRequest(ContextWithSpanFromGinCtx(ctx), ctx.Request)
 			ctx.JSON(http.StatusOK, map[string]interface{}{
 				"code":   0,
 				"msg":    "",

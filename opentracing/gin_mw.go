@@ -8,7 +8,7 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 )
 
-func Tracer() gin.HandlerFunc {
+func Tracing() gin.HandlerFunc {
 	if err := InitOpenTracer(); err != nil {
 		return func(ctx *gin.Context) {}
 	}
@@ -24,8 +24,8 @@ func Tracer() gin.HandlerFunc {
 
 		ext.HTTPUrl.Set(startSpan, ctx.Request.URL.Path)
 		ext.HTTPMethod.Set(startSpan, ctx.Request.Method)
+		// pass the span through the request context
 		ctx.Request = ctx.Request.WithContext(opentracing.ContextWithSpan(ctx.Request.Context(), startSpan))
-		context.WithValue(ctx, startSpanCtxKey, startSpan.Context())
 
 		ctx.Next()
 
@@ -35,4 +35,9 @@ func Tracer() gin.HandlerFunc {
 
 		startSpan.Finish()
 	}
+}
+
+// ContextWithSpanFromGinCtx for InjectHTTPRequest span context
+func ContextWithSpanFromGinCtx(c *gin.Context) context.Context {
+	return c.Request.Context()
 }

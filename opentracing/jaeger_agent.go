@@ -33,10 +33,6 @@ type Options struct {
 	Logger           jaegerlog.Logger //logger
 }
 
-type spanCtxKey struct{}
-
-var startSpanCtxKey = spanCtxKey{}
-
 type Option func(c *Options)
 
 func SamplerType(samplerType string) Option {
@@ -152,10 +148,9 @@ func InjectHTTPRequest(ctx context.Context, req *http.Request) {
 	if err := InitOpenTracer(); err != nil {
 		return
 	}
-	parentSpanContext := ctx.Value(startSpanCtxKey)
-	if spanContext, ok := parentSpanContext.(opentracing.SpanContext); ok {
+	if span := opentracing.SpanFromContext(ctx); span != nil {
 		err := openTracer.Inject(
-			spanContext,
+			span.Context(),
 			opentracing.HTTPHeaders,
 			opentracing.HTTPHeadersCarrier(req.Header))
 		if err != nil {
