@@ -1,6 +1,7 @@
 package opentelemetry
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -53,4 +54,9 @@ func Tracing(service string, opts ...Option) gin.HandlerFunc {
 		}
 		tracer.End(ctx, span, "", err)
 	}
+}
+
+// ContextWithSpanFromGinCtx for Inject span context
+func ContextWithSpanFromGinCtx(c *gin.Context) context.Context {
+	return c.Request.Context()
 }

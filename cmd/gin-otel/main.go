@@ -10,8 +10,8 @@ import (
 	"github.com/gin-contrib/logger"
 
 	"github.com/gin-gonic/gin"
+	"tracer/opentelemetry"
 
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
@@ -41,7 +41,7 @@ func tracerProvider(url string) (*tracesdk.TracerProvider, error) {
 		tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("opentelemetry-overstarry"), // 服务名
+			semconv.ServiceNameKey.String("opentelemetry-app-test"), // 服务名
 			semconv.ServiceVersionKey.String("0.0.1"),
 			attribute.String("environment", "test"),
 		)),
@@ -72,7 +72,8 @@ func main() {
 	engine := gin.New()
 
 	engine.Use(logger.SetLogger())
-	engine.Use(otelgin.Middleware("server"))
+	//engine.Use(otelgin.Middleware("serverTest"))
+	engine.Use(opentelemetry.Tracing("serverTest"))
 	engine.GET("/", indexHandler)
 	engine.GET("/home", homeHandler)
 	engine.GET("/home/:id", homeHandler)
@@ -122,11 +123,20 @@ func homeHandler(c *gin.Context) {
 
 	syncReq, _ := http.NewRequest("GET", "http://localhost:8080/service", nil)
 	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(syncReq.Header))
-
 	if _, err := http.DefaultClient.Do(syncReq); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String("请求 /service error", err.Error()))
 	}
+
+	ctx, span = otel.Tracer("home").Start(ctx, "ping-baidu", trace.WithSpanKind(trace.SpanKindClient))
+	bdReq, _ := http.NewRequest("GET", "https://www.baidu.com", nil)
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(bdReq.Header))
+	if _, err := http.DefaultClient.Do(bdReq); err != nil {
+		span.RecordError(err)
+		span.SetAttributes(attribute.String("ping baidu error", err.Error()))
+	}
+	span.End()
+
 	c.String(200, "请求结束！")
 }
 

@@ -16,7 +16,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestLopentrace(t *testing.T) {
+func TestOpenTracing(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "opentracing Suite")
 }
