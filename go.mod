@@ -21,4 +21,4 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
-replace github.com/weecloudy/common => ../common
+//replace github.com/weecloudy/common => ../common
