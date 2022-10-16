@@ -11,7 +11,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	github.com/weecloudy/common v0.0.0-20220905093133-336a6d03bc89
+	github.com/weecloudy/common v0.0.0-20220906081548-793f21062821
 	github.com/weecloudy/logger v0.1.1-0.20220905093436-6bf18dc0df88
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.34.0
 	go.opentelemetry.io/otel v1.9.0
